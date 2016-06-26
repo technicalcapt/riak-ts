@@ -1,0 +1,80 @@
+#!/bin/bash
+# -*- tab-width:4;indent-tabs-mode:nil -*-
+# ex: ts=4 sw=4 et
+
+# Try and make bash work safely
+# Terminate if any part of a pipeline fail
+set -o pipefail
+
+# Uncomment for debugging
+# set -x
+
+# Pull environment for this install
+. "$(cd ${0%/*} && pwd)/../lib/env.sh"
+
+# Make sure the user running this script is the owner and/or su to that user
+check_user "$@"
+ES=$?
+if [ "$ES" -ne 0 ]; then
+    exit $ES
+fi
+
+# gotta initialise OPTARG there
+OPTARG=""
+DEBUG="debug_off"
+CONFIG="$RUNNER_BASE_DIR/etc/riak_shell"
+DEFAULT_LOGFILE="$RUNNER_BASE_DIR/log/riak_shell/riak_shell"
+NODE="riak_shell@127.0.0.1"
+RUNFILE=false
+FILETORUN=""
+RUNFILEAS=""
+
+while getopts "c:df:hn:r:" OPT; do
+    case $OPT in
+        c)
+          CONFIG=$OPTARG
+          ;;
+        d) 
+          DEBUG="debug_on"
+          ;;
+        f)
+          RUNFILE=true
+          FILETORUN=$OPTARG
+          RUNFILEAS="replay"
+          ;;
+        h)
+          echo "Usage:"
+          echo "$0 -c <config> -d -f <replay_file> -n <node_name> -r <regression_file>"
+          exit 1
+          ;;
+        n)
+          NODE=$OPTARG
+          ;;
+        r)
+          RUNFILE=true
+          FILETORUN=$OPTARG
+          RUNFILEAS="regression"
+          ;;
+        \?)
+          exit 1
+          ;;
+       :)
+          echo "Option -$OPTARG requires an argument" >&2
+          exit 1
+          ;;
+   esac
+done
+
+# Always run from the bin directory
+cd "${0%/*}"
+
+# Make sure another instance is not already running
+RESULT="$($ERTS_PATH/erl -noshell -run init stop -name $NODE 2>&1)"
+if [ -z "$RESULT" ]; then
+    $ERTS_PATH/erl -run riak_shell_app boot $DEBUG "$DEFAULT_LOGFILE" "$FILETORUN" "$RUNFILEAS" -noshell -config $CONFIG -noinput -pa ../lib/riak_shell*/ebin -pa ../lib/*/ebin -name $NODE
+else
+    rm -f erl_crash.dump
+    script=$0
+    echo "An instance of ${script##*/} is already running"
+    exit 1
+fi

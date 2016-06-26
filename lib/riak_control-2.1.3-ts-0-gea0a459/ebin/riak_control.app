@@ -1,0 +1,13 @@
+{application,riak_control,
+             [{description,"Riak Admin Interface"},
+              {vsn,"2.1.3-ts-0-gea0a459"},
+              {registered,[]},
+              {applications,[kernel,stdlib,webmachine,riak_core]},
+              {mod,{riak_control_app,[]}},
+              {env,[]},
+              {modules,[base64url,index_dtl,riak_control,riak_control_app,
+                        riak_control_ring,riak_control_routes,
+                        riak_control_security,riak_control_session,
+                        riak_control_sup,riak_control_wm_cluster,
+                        riak_control_wm_gui,riak_control_wm_nodes,
+                        riak_control_wm_partitions]}]}.

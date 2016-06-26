@@ -1,0 +1,11 @@
+{application,riak_shell,
+             [{description,"REPL for Riak"},
+              {vsn,"1.0.0-0-gf276882"},
+              {applications,[kernel,stdlib]},
+              {registered,[]},
+              {mod,{riak_shell_app,[]}},
+              {env,[]},
+              {modules,[cmdline_lexer,cmdline_parser,connection_EXT,
+                        connection_srv,connection_sup,debug_EXT,history_EXT,
+                        log_EXT,riak_shell,riak_shell_app,riak_shell_util,
+                        shell_EXT]}]}.

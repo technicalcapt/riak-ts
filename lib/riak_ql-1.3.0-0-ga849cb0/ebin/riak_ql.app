@@ -1,0 +1,10 @@
+{application,riak_ql,
+             [{description,"Query language libraries for Riak"},
+              {vsn,"1.3.0-0-ga849cb0"},
+              {applications,[kernel,stdlib,sasl]},
+              {registered,[]},
+              {env,[]},
+              {modules,[riak_ql_cmd,riak_ql_component,riak_ql_ddl,
+                        riak_ql_ddl_compiler,riak_ql_lexer,riak_ql_parser,
+                        riak_ql_quanta,riak_ql_to_string,
+                        riak_ql_window_agg_fns]}]}.
